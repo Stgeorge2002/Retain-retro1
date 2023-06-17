@@ -55,7 +55,7 @@
               onEachFeature: function (feature, layer) {
                 layer.on({
                   mouseover: function(e) {
-                    e.target.bindPopup('Delivery Amount: ' + feature.properties.deliveryAmount).openPopup();
+                    e.target.bindPopup('Delivery Amount: ' + feature.properties['Delivery amount']).openPopup();
                     highlightFeature(e);
                   },
                   mouseout: function(e) {
@@ -63,7 +63,7 @@
                     resetHighlight(e);
                   },
                   click: function(e) {
-                    e.target.bindPopup('Delivery Amount: ' + feature.properties.deliveryAmount).openPopup();
+                    e.target.bindPopup('Delivery Amount: ' + feature.properties['Delivery amount']).openPopup();
                   }
                 });
               }
