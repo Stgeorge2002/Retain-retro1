@@ -64,7 +64,9 @@
                   },
                   click: function(e) {
                     e.target.bindPopup('Delivery Amount: ' + feature.properties['Delivery amount']).openPopup();
-                  }
+                    // Send the delivery amount to the parent page
+                    window.parent.postMessage({ deliveryAmount: feature.properties['Delivery amount'] }, '*');
+                 }
                 });
               }
             }).addTo(map);
