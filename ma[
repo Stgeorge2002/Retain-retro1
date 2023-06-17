@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="map" style="width: 100%; height: 600px;"></div>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([54.5, -3], 6);
+
+        // Add a base layer (you can use any tile provider)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Define a style function for different regions
+        function getRegionStyle(feature) {
+          switch (feature.properties.region) {
+            case 'Region1': return { fillColor: '#f0f0f0', weight: 1, opacity: 1, color: '#666', fillOpacity: 0.7 };
+            case 'Region2': return { fillColor: '#a0a0a0', weight: 1, opacity: 1, color: '#666', fillOpacity: 0.7 };
+            case 'Region3': return { fillColor: '#505050', weight: 1, opacity: 1, color: '#666', fillOpacity: 0.7 };
+            default: return { fillColor: '#f0f0f0', weight: 1, opacity: 1, color: '#666', fillOpacity: 0.7 };
+          }
+        }
+
+        // Highlight feature on mouse over
+        function highlightFeature(e) {
+          var layer = e.target;
+          layer.setStyle({
+            weight: 5,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+          });
+          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+          }
+        }
+
+        // Reset the highlight on mouse out
+        function resetHighlight(e) {
+          var layer = e.target;
+          layer.setStyle(getRegionStyle(layer.feature));
+        }
+
+        // Load the GeoJSON data and add it to the map
+        fetch('uk-counties_1682.geojson')
+          .then(response => response.json())
+          .then(data => {
+            L.geoJSON(data, {
+              style: getRegionStyle,
+              onEachFeature: function (feature, layer) {
+                layer.on({
+                  mouseover: function(e) {
+                    e.target.bindPopup('Delivery Amount: ' + feature.properties.deliveryAmount).openPopup();
+                    highlightFeature(e);
+                  },
+                  mouseout: function(e) {
+                    e.target.closePopup();
+                    resetHighlight(e);
+                  },
+                  click: function(e) {
+                    e.target.bindPopup('Delivery Amount: ' + feature.properties.deliveryAmount).openPopup();
+                  }
+                });
+              }
+            }).addTo(map);
+          });
+      </script>
+</body>
+</html>
